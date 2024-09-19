@@ -12,10 +12,10 @@ y = np.sin(X).ravel()  # 正弦函数值
 
 # 可视化数据
 plt.figure(figsize=(10, 4))
-plt.scatter(X, y, color='lightgray', label='真实数据')
-plt.title('正弦函数数据分布')
-plt.xlabel('x')
-plt.ylabel('sin(x)')
+plt.scatter(X, y, color="lightgray", label="真实数据")
+plt.title("正弦函数数据分布")
+plt.xlabel("x")
+plt.ylabel("sin(x)")
 plt.legend()
 plt.show()
 
@@ -37,13 +37,13 @@ print(f"测试集大小: {X_test.shape}")
 # 4. 构建BP神经网络模型
 mlp = MLPRegressor(
     hidden_layer_sizes=(100, 100),
-    activation='tanh',
-    solver='adam',
+    activation="tanh",
+    solver="adam",
     alpha=1e-4,
-    learning_rate='adaptive',
+    learning_rate="adaptive",
     max_iter=10000,
     tol=1e-6,
-    random_state=42
+    random_state=42,
 )
 
 # 5. 训练模型
@@ -71,10 +71,10 @@ y_dense = np.sin(x_dense)
 
 # 绘制结果
 plt.figure(figsize=(12, 6))
-plt.plot(x_dense, y_dense, label='真实正弦曲线', color='blue')
-plt.scatter(X_test_sorted, y_pred_sorted, label='BP神经网络拟合', color='red', s=10)
-plt.title('BP神经网络拟合正弦曲线')
-plt.xlabel('x')
-plt.ylabel('sin(x)')
+plt.plot(x_dense, y_dense, label="真实正弦曲线", color="blue")
+plt.scatter(X_test_sorted, y_pred_sorted, label="BP神经网络拟合", color="red", s=10)
+plt.title("BP神经网络拟合正弦曲线")
+plt.xlabel("x")
+plt.ylabel("sin(x)")
 plt.legend()
 plt.show()
