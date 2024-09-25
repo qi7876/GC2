@@ -11,8 +11,8 @@ digits = load_digits()
 X = digits.data
 y = digits.target
 
-print(f"数据集大小: {X.shape}")
-print(f"标签类别: {np.unique(y)}")
+print(f"Data Set Size: {X.shape}")
+print(f"Label Types: {np.unique(y)}")
 
 # 2. 数据预处理
 scaler = StandardScaler()
@@ -23,8 +23,8 @@ X_train, X_test, y_train, y_test = train_test_split(
     X_scaled, y, test_size=0.2, random_state=42, stratify=y
 )
 
-print(f"训练集大小: {X_train.shape}")
-print(f"测试集大小: {X_test.shape}")
+print(f"Train Set Size: {X_train.shape}")
+print(f"Test Set Size: {X_test.shape}")
 
 # 4. 构建BP神经网络模型
 mlp = MLPClassifier(
@@ -47,12 +47,12 @@ mlp.fit(X_train, y_train)
 # 6. 评估模型性能
 y_pred = mlp.predict(X_test)
 accuracy = accuracy_score(y_test, y_pred)
-print(f"模型准确率: {accuracy * 100:.2f}%")
+print(f"Model Accuracy: {accuracy * 100:.2f}%")
 
-print("分类报告:")
+print("Classification Report:")
 print(classification_report(y_test, y_pred))
 
-print("混淆矩阵:")
+print("Confusion Matrix:")
 print(confusion_matrix(y_test, y_pred))
 
 # 7. 预测和可视化结果
@@ -67,7 +67,7 @@ for i, idx in enumerate(indices):
 
     plt.subplot(2, 5, i + 1)
     plt.imshow(image, cmap="gray")
-    plt.title(f"真实: {true_label}\n预测: {pred_label}")
+    plt.title(f"Real: {true_label}\nPredicted: {pred_label}")
     plt.axis("off")
 
 plt.tight_layout()

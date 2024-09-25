@@ -12,8 +12,8 @@ y = np.sin(X).ravel()  # 正弦函数值
 
 # 可视化数据
 plt.figure(figsize=(10, 4))
-plt.scatter(X, y, color="lightgray", label="真实数据")
-plt.title("正弦函数数据分布")
+plt.scatter(X, y, color="lightgray", label="Real Data")
+plt.title("Sin Wave Data Distibution")
 plt.xlabel("x")
 plt.ylabel("sin(x)")
 plt.legend()
@@ -31,8 +31,8 @@ X_train, X_test, y_train, y_test = train_test_split(
     X_scaled, y_scaled, test_size=0.2, random_state=42
 )
 
-print(f"训练集大小: {X_train.shape}")
-print(f"测试集大小: {X_test.shape}")
+print(f"Train Set Size: {X_train.shape}")
+print(f"Test Set Size: {X_test.shape}")
 
 # 4. 构建BP神经网络模型
 mlp = MLPRegressor(
@@ -55,7 +55,7 @@ y_pred = scaler_y.inverse_transform(y_pred_scaled.reshape(-1, 1)).ravel()
 y_test_actual = scaler_y.inverse_transform(y_test.reshape(-1, 1)).ravel()
 
 mse = mean_squared_error(y_test_actual, y_pred)
-print(f"模型在测试集上的均方误差: {mse:.4f}")
+print(f"MSE Loss on test set: {mse:.4f}")
 
 # 7. 绘制拟合结果
 # 准备绘图数据
@@ -71,10 +71,43 @@ y_dense = np.sin(x_dense)
 
 # 绘制结果
 plt.figure(figsize=(12, 6))
-plt.plot(x_dense, y_dense, label="真实正弦曲线", color="blue")
-plt.scatter(X_test_sorted, y_pred_sorted, label="BP神经网络拟合", color="red", s=10)
-plt.title("BP神经网络拟合正弦曲线")
+plt.plot(x_dense, y_dense, label="Real Sin Wave", color="blue")
+plt.scatter(X_test_sorted, y_pred_sorted, label="BP Fit", color="red", s=10)
+plt.title("BP Fit Sin Wave")
 plt.xlabel("x")
 plt.ylabel("sin(x)")
 plt.legend()
 plt.show()
+
+
+# 8. 输入 x 值并输出模型预测值和误差
+def predict_and_compare(x_value):
+    # 将 x_value 进行标准化
+    x_scaled = scaler_X.transform(np.array([[x_value]]))
+
+    # 通过模型预测 y 值
+    y_pred_scaled = mlp.predict(x_scaled)
+    y_pred = scaler_y.inverse_transform(y_pred_scaled.reshape(-1, 1)).ravel()[0]
+
+    # 计算真实的正弦函数值
+    y_real = np.sin(x_value)
+
+    # 计算误差
+    error = abs(y_real - y_pred)
+
+    print(f"\nInput x: {x_value}")
+    print(f"Model Predicted y: {y_pred}")
+    print(f"Real sin(x): {y_real}")
+    print(f"Error: {error}")
+
+
+# 等待用户输入 x 值
+while True:
+    user_input = input("\nEnter a value for x (or type 'exit' to quit): ")
+    if user_input.lower() == "exit":
+        break
+    try:
+        x_value = float(user_input)
+        predict_and_compare(x_value)
+    except ValueError:
+        print("Invalid input. Please enter a valid number.")
