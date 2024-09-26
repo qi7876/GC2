@@ -13,21 +13,24 @@
 # limitations under the License.
 # ============================================================================
 """download MNIST dataset"""
+
 import os
 import sys
 import gzip
 from urllib.parse import urlparse
 import requests
 
+
 def unzipfile(gzip_path):
     """unzip dataset file
     Args:
         gzip_path: dataset file path
     """
-    open_file = open(gzip_path.replace('.gz', ''), 'wb')
+    open_file = open(gzip_path.replace(".gz", ""), "wb")
     gz_file = gzip.GzipFile(gzip_path)
     open_file.write(gz_file.read())
     gz_file.close()
+
 
 def download_progress(url, file_name):
     """download mnist dataset
@@ -46,11 +49,16 @@ def download_progress(url, file_name):
             f.flush()
             done = int(100 * temp_size / total_size)
             # show download progress
-            sys.stdout.write("\r[{}{}] {:.2f}%".format("█" * done, " " * (100 - done), 100 * temp_size / total_size))
+            sys.stdout.write(
+                "\r[{}{}] {:.2f}%".format(
+                    "█" * done, " " * (100 - done), 100 * temp_size / total_size
+                )
+            )
             sys.stdout.flush()
     print("\n============== {} is already ==============".format(file_name))
     unzipfile(file_name)
     os.remove(file_name)
+
 
 def download_dataset():
     """Download the dataset from http://yann.lecun.com/exdb/mnist/."""
@@ -62,17 +70,23 @@ def download_dataset():
     if not train_path_check and not test_path_check:
         os.makedirs(train_path)
         os.makedirs(test_path)
-    train_url = {"http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz", "http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz"}
-    test_url = {"http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz", "http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz"}
+    train_url = {
+        "http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz",
+        "http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz",
+    }
+    test_url = {
+        "http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz",
+        "http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz",
+    }
     for url in train_url:
         url_parse = urlparse(url)
         # split the file name from url
-        file_name = os.path.join(train_path, url_parse.path.split('/')[-1])
-        if not os.path.exists(file_name.replace('.gz', '')):
+        file_name = os.path.join(train_path, url_parse.path.split("/")[-1])
+        if not os.path.exists(file_name.replace(".gz", "")):
             download_progress(url, file_name)
     for url in test_url:
         url_parse = urlparse(url)
         # split the file name from url
-        file_name = os.path.join(test_path, url_parse.path.split('/')[-1])
-        if not os.path.exists(file_name.replace('.gz', '')):
+        file_name = os.path.join(test_path, url_parse.path.split("/")[-1])
+        if not os.path.exists(file_name.replace(".gz", "")):
             download_progress(url, file_name)
