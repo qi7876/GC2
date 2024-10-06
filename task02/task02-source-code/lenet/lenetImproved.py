@@ -22,6 +22,7 @@ import mindspore.dataset as ds
 import mindspore.nn as nn
 from mindspore import context, Model, load_checkpoint, load_param_into_net
 from mindspore.common.initializer import Normal
+from mindspore.nn.layer.activation import ops
 from mindspore.train.callback import ModelCheckpoint, CheckpointConfig, LossMonitor
 import mindspore.dataset.vision as CV
 import mindspore.dataset.transforms as C
@@ -105,21 +106,31 @@ class LeNet5(nn.Cell):
     # define the operator required
     def __init__(self, num_class=10, num_channel=1):
         super(LeNet5, self).__init__()
-        self.conv1 = nn.Conv2d(num_channel, 32, 5, pad_mode="valid")
+        self.conv1 = nn.Conv2d(num_channel, 32, 3, pad_mode="same")
+        self.conv2 = nn.Conv2d(num_channel, 32, 5, pad_mode="same")
+        self.conv3 = nn.Conv2d(num_channel, 32, 7, pad_mode="same")
+        self.conv4 = nn.Conv2d(32 * 3, 64, 3, pad_mode="valid")
         self.bn1 = nn.BatchNorm2d(32)
-        self.conv2 = nn.Conv2d(32, 64, 5, pad_mode="valid")
-        self.bn2 = nn.BatchNorm2d(64)
-        self.fc1 = nn.Dense(64 * 5 * 5, 128, weight_init=Normal(0.02))
-        self.fc2 = nn.Dense(128, 256, weight_init=Normal(0.02))
-        self.fc3 = nn.Dense(256, num_class, weight_init=Normal(0.02))
+        self.bn2 = nn.BatchNorm2d(32)
+        self.bn3 = nn.BatchNorm2d(32)
+        self.bn4 = nn.BatchNorm2d(64)
+        self.fc1 = nn.Dense(64 * 7 * 7, 256, weight_init=Normal(0.02))
+        self.fc2 = nn.Dense(256, 128, weight_init=Normal(0.02))
+        self.fc3 = nn.Dense(128, num_class, weight_init=Normal(0.02))
         self.relu = nn.ReLU()
         self.max_pool2d = nn.MaxPool2d(kernel_size=2, stride=2)
         self.flatten = nn.Flatten()
 
     # use the preceding operators to construct networks
     def construct(self, x):
-        x = self.max_pool2d(self.relu(self.bn1(self.conv1(x))))
-        x = self.max_pool2d(self.relu(self.bn2(self.conv2(x))))
+        branch1 = self.max_pool2d(self.relu(self.bn1(self.conv1(x))))
+        branch2 = self.max_pool2d(self.relu(self.bn2(self.conv2(x))))
+        branch3 = self.max_pool2d(self.relu(self.bn3(self.conv3(x))))
+
+        x = ops.concat((branch1, branch2, branch3), axis=1)
+
+        x = self.max_pool2d(self.relu(self.bn4(self.conv4(x))))
+
         x = self.flatten(x)
         x = self.relu(self.fc1(x))
         x = self.relu(self.fc2(x))
@@ -169,8 +180,7 @@ if __name__ == "__main__":
     # download mnist dataset
     download_dataset()
     # learning rate setting
-    lr = 0.01
-    momentum = 0.9
+    lr = 0.001
     dataset_size = 1
     mnist_path = "./fashion"
     # define the loss function
@@ -179,14 +189,13 @@ if __name__ == "__main__":
     # create the network
     net = LeNet5()
     # define the optimizer
-    # net_opt = nn.Adam(
-    #     net.trainable_params(),
-    #     learning_rate=0.1,
-    #     weight_decay=0.0,
-    #     use_lazy=False,
-    #     use_offload=False,
-    # )
-    net_opt = nn.Momentum(net.trainable_params(), lr, momentum)
+    net_opt = nn.Adam(
+        net.trainable_params(),
+        learning_rate=lr,
+        weight_decay=0.0,
+        use_lazy=False,
+        use_offload=False,
+    )
     config_ck = CheckpointConfig(save_checkpoint_steps=1875, keep_checkpoint_max=10)
     # save the network model and parameters for subsequence fine-tuning
     ckpoint = ModelCheckpoint(
