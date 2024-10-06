@@ -196,7 +196,7 @@ if __name__ == "__main__":
         use_lazy=False,
         use_offload=False,
     )
-    config_ck = CheckpointConfig(save_checkpoint_steps=1875, keep_checkpoint_max=10)
+    config_ck = CheckpointConfig(save_checkpoint_steps=3000, keep_checkpoint_max=10)
     # save the network model and parameters for subsequence fine-tuning
     ckpoint = ModelCheckpoint(
         prefix="checkpoint_lenet", directory="./checkpoint/", config=config_ck
