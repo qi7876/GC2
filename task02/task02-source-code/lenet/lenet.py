@@ -105,9 +105,9 @@ class LeNet5(nn.Cell):
     # define the operator required
     def __init__(self, num_class=10, num_channel=1):
         super(LeNet5, self).__init__()
-        self.conv1 = nn.Conv2d(num_channel, 6, 3, pad_mode="valid")
-        self.conv2 = nn.Conv2d(6, 16, 3, pad_mode="valid")
-        self.fc1 = nn.Dense(16 * 6 * 6, 120, weight_init=Normal(0.02))
+        self.conv1 = nn.Conv2d(num_channel, 6, 5, pad_mode="valid")
+        self.conv2 = nn.Conv2d(6, 16, 5, pad_mode="valid")
+        self.fc1 = nn.Dense(16 * 5 * 5, 120, weight_init=Normal(0.02))
         self.fc2 = nn.Dense(120, 84, weight_init=Normal(0.02))
         self.fc3 = nn.Dense(84, num_class, weight_init=Normal(0.02))
         self.relu = nn.ReLU()
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     lr = 0.01
     momentum = 0.9
     dataset_size = 1
-    mnist_path = "./MNIST_Data"
+    mnist_path = "./fashion"
     # define the loss function
     net_loss = SoftmaxCrossEntropyWithLogits(sparse=True, reduction="mean")
     train_epoch = 1
