@@ -10,15 +10,6 @@ np.random.seed(42)
 X = np.linspace(0, 2 * np.pi, 1000).reshape(-1, 1)
 y = np.sin(X).ravel()
 
-# visualize the dataset
-plt.figure(figsize=(10, 4))
-plt.scatter(X, y, color="lightgray", label="Real Data")
-plt.title("Sin Wave Data Distibution")
-plt.xlabel("x")
-plt.ylabel("sin(x)")
-plt.legend()
-plt.show()
-
 # 2. preprocess for dataset
 scaler_X = StandardScaler()
 X_scaled = scaler_X.fit_transform(X)

@@ -23,8 +23,8 @@ import mindspore.nn as nn
 from mindspore import context, Model, load_checkpoint, load_param_into_net
 from mindspore.common.initializer import Normal
 from mindspore.train.callback import ModelCheckpoint, CheckpointConfig, LossMonitor
-import mindspore.dataset.vision.c_transforms as CV
-import mindspore.dataset.transforms.c_transforms as C
+import mindspore.dataset.vision as CV
+import mindspore.dataset.transforms as C
 from mindspore.dataset.vision import Inter
 from mindspore.nn import Accuracy
 from mindspore import dtype as mstype
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     lr = 0.01
     momentum = 0.9
     dataset_size = 1
-    mnist_path = "./fashion"
+    mnist_path = "./MNIST_Data"
     # define the loss function
     net_loss = SoftmaxCrossEntropyWithLogits(sparse=True, reduction="mean")
     train_epoch = 1

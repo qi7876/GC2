@@ -155,7 +155,7 @@ def test_net(network, network_model, data_path):
     """Define the evaluation method."""
     print("============== Starting Testing ==============")
     # load the saved model for evaluation
-    param_dict = load_checkpoint("./checkpoint/checkpoint_lenet-1_1875.ckpt")
+    param_dict = load_checkpoint("./checkpoint/checkpoint_lenet-1_3000.ckpt")
     # load parameter to the network
     load_param_into_net(network, param_dict)
     # load testing dataset
