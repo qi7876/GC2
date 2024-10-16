@@ -106,14 +106,10 @@ class LeNet5(nn.Cell):
     # define the operator required
     def __init__(self, num_class=10, num_channel=1):
         super(LeNet5, self).__init__()
-        self.conv1 = nn.Conv2d(num_channel, 32, 3, pad_mode="same")
-        self.conv2 = nn.Conv2d(num_channel, 32, 5, pad_mode="same")
-        self.conv3 = nn.Conv2d(num_channel, 32, 7, pad_mode="same")
-        self.conv4 = nn.Conv2d(32 * 3, 64, 3, pad_mode="valid")
-        self.bn1 = nn.BatchNorm2d(32)
-        self.bn2 = nn.BatchNorm2d(32)
-        self.bn3 = nn.BatchNorm2d(32)
-        self.bn4 = nn.BatchNorm2d(64)
+        self.conv1 = nn.Conv2d(num_channel, 32, 3, pad_mode="pad", padding=1)
+        self.conv2 = nn.Conv2d(num_channel, 32, 5, pad_mode="pad", padding=2)
+        self.conv3 = nn.Conv2d(num_channel, 32, 7, pad_mode="pad", padding=3)
+        self.conv4 = nn.Conv2d(32 * 3, 64, 3, pad_mode="pad")
         self.fc1 = nn.Dense(64 * 7 * 7, 256, weight_init=Normal(0.02))
         self.fc2 = nn.Dense(256, 128, weight_init=Normal(0.02))
         self.fc3 = nn.Dense(128, num_class, weight_init=Normal(0.02))
@@ -123,13 +119,13 @@ class LeNet5(nn.Cell):
 
     # use the preceding operators to construct networks
     def construct(self, x):
-        branch1 = self.max_pool2d(self.relu(self.bn1(self.conv1(x))))
-        branch2 = self.max_pool2d(self.relu(self.bn2(self.conv2(x))))
-        branch3 = self.max_pool2d(self.relu(self.bn3(self.conv3(x))))
+        branch1 = self.max_pool2d(self.relu(self.conv1(x)))
+        branch2 = self.max_pool2d(self.relu(self.conv2(x)))
+        branch3 = self.max_pool2d(self.relu(self.conv3(x)))
 
         x = ops.concat((branch1, branch2, branch3), axis=1)
 
-        x = self.max_pool2d(self.relu(self.bn4(self.conv4(x))))
+        x = self.max_pool2d(self.relu(self.conv4(x)))
 
         x = self.flatten(x)
         x = self.relu(self.fc1(x))
@@ -155,7 +151,7 @@ def test_net(network, network_model, data_path):
     """Define the evaluation method."""
     print("============== Starting Testing ==============")
     # load the saved model for evaluation
-    param_dict = load_checkpoint("./checkpoint/checkpoint_lenet-1_3000.ckpt")
+    param_dict = load_checkpoint("./checkpoint/checkpoint_lenet-1_1875.ckpt")
     # load parameter to the network
     load_param_into_net(network, param_dict)
     # load testing dataset
@@ -182,7 +178,7 @@ if __name__ == "__main__":
     # learning rate setting
     lr = 0.001
     dataset_size = 1
-    mnist_path = "./fashion"
+    mnist_path = "./MNIST_Data"
     # define the loss function
     net_loss = SoftmaxCrossEntropyWithLogits(sparse=True, reduction="mean")
     train_epoch = 1
@@ -196,7 +192,7 @@ if __name__ == "__main__":
         use_lazy=False,
         use_offload=False,
     )
-    config_ck = CheckpointConfig(save_checkpoint_steps=3000, keep_checkpoint_max=10)
+    config_ck = CheckpointConfig(save_checkpoint_steps=1875, keep_checkpoint_max=10)
     # save the network model and parameters for subsequence fine-tuning
     ckpoint = ModelCheckpoint(
         prefix="checkpoint_lenet", directory="./checkpoint/", config=config_ck
