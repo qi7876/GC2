@@ -4,7 +4,7 @@ Copyright (R) @huawei.com, all rights reserved
 CREATED:  2021-01-20 20:12:13
 MODIFIED: 2021-01-29 14:04:45
 """
-from mindspore.train.serialization import load_checkpoint, save_checkpoint, export
+from mindspore.train.serialization import load_checkpoint, export
 from lenet import LeNet5
 import numpy as np
 from mindspore import Tensor
